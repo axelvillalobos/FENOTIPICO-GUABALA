@@ -1,0 +1,65 @@
+import pandas as pd
+
+# Cargar el archivo Excel
+file_path = '/mnt/data/4 VAR_ZOOM.xlsx'
+xlsx = pd.ExcelFile(file_path)
+
+# Leer la hoja de interés, asumiendo que es la primera hoja o especificando el nombre si es conocido
+df = pd.read_excel(xlsx, sheet_name=0)
+
+# Verificar las columnas presentes en el DataFrame
+columnas_presentes = df.columns
+
+columnas_presentes
+
+
+# Realizar cálculos estadísticos para las variables especificadas
+variables = ['AC', 'LC', 'Lcu', 'LgCo', 'AG', 'LG', 'PT', 'DDE', 'DBC', 'PC', 'ACR', 'AGR']
+estadisticas = pd.DataFrame(index=variables, columns=['n', 'Min', 'Max', 'Media', 'CV (%)', 'Desviación Estándar'])
+
+for var in variables:
+    estadisticas.loc[var, 'n'] = df[var].count()
+    estadisticas.loc[var, 'Min'] = df[var].min()
+    estadisticas.loc[var, 'Max'] = df[var].max()
+    estadisticas.loc[var, 'Media'] = df[var].mean()
+    estadisticas.loc[var, 'Desviación Estándar'] = df[var].std()
+    estadisticas.loc[var, 'CV (%)'] = (df[var].std() / df[var].mean()) * 100
+
+# Exportar las estadísticas a un nuevo archivo Excel
+output_file_path = '/mnt/data/estadisticas_VAR_ZOOM.xlsx'
+with pd.ExcelWriter(output_file_path, engine='xlsxwriter') as writer:
+    estadisticas.to_excel(writer, sheet_name='Estadísticas')
+
+output_file_path
+
+
+POR SEXO
+
+import pandas as pd
+
+# Cargar el archivo Excel
+file_path = '/mnt/data/4 VAR_ZOOM.xlsx'
+df = pd.read_excel(file_path)
+
+# Mostrar las primeras filas del DataFrame para entender la estructura de los datos
+df.head()
+
+
+# Separar los datos por sexo
+df_machos = df[df['Sexo'] == 'M']
+df_hembras = df[df['Sexo'] == 'H']
+
+# Lista de variables de interés
+variables = ['AC', 'LC', 'Lcu', 'LgCo', 'AG', 'LG', 'PT', 'DDE', 'DBC', 'PC', 'ACR', 'AGR']
+
+# Función para calcular los estadísticos solicitados
+def calcular_estadisticos(data):
+    estadisticos = data[variables].agg(['count', 'min', 'max', 'mean', 'std'])
+    estadisticos.loc['coef_var'] = (estadisticos.loc['std'] / estadisticos.loc['mean']) * 100
+    return estadisticos
+
+# Calcular estadísticos para machos y hembras
+estadisticos_machos = calcular_estadisticos(df_machos)
+estadisticos_hembras = calcular_estadisticos(df_hembras)
+
+estadisticos_machos, estadisticos_hembras
