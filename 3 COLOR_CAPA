@@ -1,0 +1,28 @@
+# Cargar el nuevo archivo Excel
+archivo_color_capa = '/mnt/data/3 COLOR_CAPA.xlsx'
+df_color_capa = pd.read_excel(archivo_color_capa)
+
+# Mostrar las primeras filas para entender la estructura del archivo
+df_color_capa.head()
+
+# Calcular la frecuencia para las columnas de datos de color y capa
+frecuencias_color_capa = {}
+columnas_interes_color_capa = ['NUM_COLOR', 'CLASIF_COLOR', 'PREDOM_COLOR', 'LONG_PELO']
+
+for columna in columnas_interes_color_capa:
+    # Para 'NUM_COLOR' se calcula la frecuencia de manera un poco diferente porque es numérica
+    if columna == 'NUM_COLOR':
+        frecuencias_color_capa[columna] = df_color_capa[columna].value_counts().sort_index().reset_index()
+    else:
+        frecuencias_color_capa[columna] = df_color_capa[columna].value_counts().reset_index()
+    frecuencias_color_capa[columna].columns = [columna, 'Frecuencia']
+
+# Crear un nuevo DataFrame para exportar a Excel
+archivo_frecuencias_color_capa = '/mnt/data/frecuencias_color_capa_ganado_guabala.xlsx'
+with pd.ExcelWriter(archivo_frecuencias_color_capa) as writer:
+    for columna, datos in frecuencias_color_capa.items():
+        datos.to_excel(writer, sheet_name=columna, index=False)
+
+archivo_frecuencias_color_capa
+
+
