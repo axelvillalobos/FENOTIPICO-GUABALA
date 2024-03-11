@@ -1,0 +1,45 @@
+import pandas as pd
+
+# Load the Excel file
+file_path = '/mnt/data/6 INDICE_PRODUCT.xlsx'
+data = pd.read_excel(file_path)
+
+# Display the first few rows of the dataframe to understand its structure
+data.head()
+
+# Perform statistical calculations for each variable
+statistics = data[['IDC', 'IDT', 'IPT', 'IPL', 'IPRT', 'IPRO']].describe().T  # Basic statistics
+
+# Calculate Coefficient of Variation (CV) = (Standard Deviation / Mean) * 100
+statistics['CV'] = (statistics['std'] / statistics['mean']) * 100
+
+# Rename columns for clarity
+statistics_renamed = statistics.rename(columns={'count': 'n', 'min': 'Minimum', 'max': 'Maximum', 'mean': 'Mean', 'std': 'Standard Deviation'})
+
+# Selecting required columns
+final_statistics = statistics_renamed[['n', 'Minimum', 'Maximum', 'Mean', 'CV', 'Standard Deviation']]
+
+final_statistics
+
+
+# Calculate statistics for each variable grouped by 'Sexo', including Coefficient of Variation
+def calc_stats(group):
+    stats = group.describe().T
+    stats['CV'] = (group.std() / group.mean()) * 100
+    return stats[['count', 'min', 'max', 'mean', 'CV', 'std']]
+
+# Apply the function to the grouped data
+grouped_stats_by_sex = data.groupby('Sexo').apply(calc_stats)
+
+# Rename columns for clarity
+final_stats_by_sex = grouped_stats_by_sex.rename(columns={
+    'count': 'n',
+    'min': 'Minimum',
+    'max': 'Maximum',
+    'mean': 'Mean',
+    'CV': 'Coefficient of Variation',
+    'std': 'Standard Deviation'
+})
+
+final_stats_by_sex
+
