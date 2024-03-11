@@ -1,0 +1,21 @@
+import pandas as pd
+
+# Cargar el archivo Excel
+file_path = '/mnt/data/1 MORFO_CEFALICO.xlsx'
+data = pd.read_excel(file_path)
+
+# Mostrar las primeras filas del archivo para entender su estructura
+data.head()
+
+# Calcular la frecuencia para cada columna
+frequencies = {}
+for column in data.columns:
+    frequencies[column] = data[column].value_counts().reset_index().rename(columns={'index': column, column: 'Frecuencia'})
+
+# Preparar la escritura en Excel
+output_path = '/mnt/data/frecuencias_morfologicas_ganado_guabala.xlsx'
+with pd.ExcelWriter(output_path) as writer:
+    for column, freq_df in frequencies.items():
+        freq_df.to_excel(writer, sheet_name=column, index=False)
+
+output_path
