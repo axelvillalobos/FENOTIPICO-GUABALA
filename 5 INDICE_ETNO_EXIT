@@ -1,0 +1,30 @@
+# Cargar el archivo Excel para la tabla 5 INDICE_ETNO
+file_path_etno = '/mnt/data/5 INDICE_ETNO.xlsx'
+df_etno = pd.read_excel(file_path_etno)
+
+# Mostrar las primeras filas del DataFrame para entender la estructura de los datos
+df_etno.head()
+
+# Lista de variables de interés para la tabla INDICE_ETNO
+variables_etno = ['ICE', 'ITO', 'IPE', 'ICO']
+
+# Calcular estadísticos para las variables ICE, ITO, IPE, ICO
+estadisticos_etno = df_etno[variables_etno].agg(['count', 'min', 'max', 'mean', 'std'])
+estadisticos_etno.loc['coef_var'] = (estadisticos_etno.loc['std'] / estadisticos_etno.loc['mean']) * 100
+
+estadisticos_etno
+
+POR SEXO
+
+# Separar los datos de la tabla INDICE_ETNO por sexo
+df_etno_machos = df_etno[df_etno['Sexo'] == 'M']
+df_etno_hembras = df_etno[df_etno['Sexo'] == 'H']
+
+# Calcular estadísticos para machos y hembras
+estadisticos_etno_machos = df_etno_machos[variables_etno].agg(['count', 'min', 'max', 'mean', 'std'])
+estadisticos_etno_machos.loc['coef_var'] = (estadisticos_etno_machos.loc['std'] / estadisticos_etno_machos.loc['mean']) * 100
+
+estadisticos_etno_hembras = df_etno_hembras[variables_etno].agg(['count', 'min', 'max', 'mean', 'std'])
+estadisticos_etno_hembras.loc['coef_var'] = (estadisticos_etno_hembras.loc['std'] / estadisticos_etno_hembras.loc['mean']) * 100
+
+estadisticos_etno_machos, estadisticos_etno_hembras
