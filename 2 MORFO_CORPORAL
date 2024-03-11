@@ -1,0 +1,22 @@
+# Cargar el nuevo archivo Excel
+archivo_morfo_corporal = '/mnt/data/2 MORFO_CORPORAL.xlsx'
+df_morfo_corporal = pd.read_excel(archivo_morfo_corporal)
+
+# Mostrar las primeras filas para entender la estructura del archivo
+df_morfo_corporal.head()
+
+# Calcular la frecuencia para las nuevas columnas de interés
+frecuencias_corporales = {}
+columnas_interes_corporales = ['PERFIL_DORSO', 'FORMA_NALGA', 'GIBA', 'PAPADA']
+
+for columna in columnas_interes_corporales:
+    frecuencias_corporales[columna] = df_morfo_corporal[columna].value_counts().reset_index()
+    frecuencias_corporales[columna].columns = [columna, 'Frecuencia']
+
+# Crear un nuevo DataFrame para exportar a Excel
+archivo_frecuencias_corporales = '/mnt/data/frecuencias_morfologicas_corporales_ganado_guabala.xlsx'
+with pd.ExcelWriter(archivo_frecuencias_corporales) as writer:
+    for columna, datos in frecuencias_corporales.items():
+        datos.to_excel(writer, sheet_name=columna, index=False)
+
+archivo_frecuencias_corporales
