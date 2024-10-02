@@ -1,0 +1,22 @@
+from scipy import stats
+
+# Perform independent t-tests for each numerical variable between the two groups (H and M)
+# Extracting data for each sex
+group_H = data[data['Sexo'] == 'H']
+group_M = data[data['Sexo'] == 'M']
+
+# List of columns to test
+columns_to_test = ['AC', 'LC', 'Lcu', 'LgCo', 'AG', 'LG', 'PT', 'DDE', 'DBC', 'PC', 'ACR', 'AGR']
+
+# Performing the t-tests and collecting the results
+t_test_results = {}
+
+for column in columns_to_test:
+    t_stat, p_value = stats.ttest_ind(group_H[column], group_M[column], equal_var=False)
+    t_test_results[column] = {'t_stat': t_stat, 'p_value': p_value}
+
+# Convert results into a DataFrame for better visualization
+t_test_df = pd.DataFrame(t_test_results).T
+
+# Display the results to the user
+import ace_tools as tools; tools.display_dataframe_to_user(name="T-test Results for Dimorphism", dataframe=t_test_df)
